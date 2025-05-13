@@ -2,7 +2,8 @@ from airflow import DAG
 from airflow.providers.http.hooks.http import HttpHook
 from airflow.providers.postgres.hooks.postgres import PostgresHook
 from airflow.decorators import task
-from airflow.utils.dates import days_ago
+#from airflow.utils.dates import days_ago
+import pendulum
 import requests
 import json
 
@@ -14,13 +15,14 @@ API_CONN_ID='open_meteo_api'
 
 default_args={
     'owner':'airflow',
-    'start_date':days_ago(1)
+    #'start_date':days_ago(1)
+    'start_date':pendulum.today().add(days=-1)
 }
 
 ## DAG
 with DAG(dag_id='weather_etl_pipeline',
          default_args=default_args,
-         schedule_interval='@daily',
+         schedule='@daily',
          catchup=False) as dags:
     
     @task()
